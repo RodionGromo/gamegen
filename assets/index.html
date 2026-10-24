@@ -6,7 +6,20 @@
 	<title>Генератор игр</title>
 </head>
 <body>
-
+	<div class="container">
+		<div class="col">
+			<div class="row">
+				<h1 class="w-max text-center">Генератор игр 3000</h1>
+			</div>
+			<div class="row" id="promptInputPane">
+				<label for="promptInputField" class="form-label">Введите, как должна выглядеть и играться игра:</label>
+				<textarea class="form-control" id="promptInputField"></textarea>
+			</div>
+			<div class="row" id="gameOutputPane" hidden>
+				<h3 class="w-max text-center">Ваша игра готова!</h3>
+			</div>
+		</div>
+	</div>
 	<link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<script type="module" src="./bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>

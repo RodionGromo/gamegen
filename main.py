@@ -1,4 +1,5 @@
 from flask import Flask, send_file
+import os
 
 app = Flask(__name__)
 
@@ -11,6 +12,11 @@ with open("settings.json", "r") as f:
 @app.route("/index")
 def http_index():
 	return send_file("./assets/index.html")
+
+@app.route("/files/<filename>")
+def http_file(filename: str)
+	if os.path.isfile("./assets/" + filename):
+		return send_file("./assets/" + filename)
 
 if __name__ == "__main__":
 	app.run(port=4515, debug=False)
