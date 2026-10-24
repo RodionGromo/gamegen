@@ -14,7 +14,7 @@ def http_index():
 	return send_file("./assets/index.html")
 
 @app.route("/files/<filename>")
-def http_file(filename: str)
+def http_file(filename: str):
 	if os.path.isfile("./assets/" + filename):
 		return send_file("./assets/" + filename)
 
