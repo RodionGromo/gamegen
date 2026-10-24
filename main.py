@@ -1,11 +1,11 @@
 from flask import Flask, send_file
-import os
+import os, json
 
 app = Flask(__name__)
 
 appSettings = {}
 with open("settings.json", "r") as f:
-	json.loads(f)
+	json.load(f)
 
 @app.route("/")
 @app.route("/index.html")
