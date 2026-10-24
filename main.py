@@ -17,6 +17,14 @@ def http_index():
 def http_file(filename: str):
 	if os.path.isfile("./assets/" + filename):
 		return send_file("./assets/" + filename)
+	return "file not found on server!", 404
+
+@app.route("/bootstrap/<folder>/<file>")
+def http_file(folder: str, filename: str):
+	path = "./assets/bootstrap/" + folder + "/" + filename
+	if os.path.isfile(path):
+		return send_file(path)
+	return "bootstrap file not found on server!", 404
 
 if __name__ == "__main__":
 	app.run(port=4515, debug=False)
