@@ -20,7 +20,7 @@ def http_file(filename: str):
 	return "file not found on server!", 404
 
 @app.route("/bootstrap/<folder>/<file>")
-def http_file(folder: str, filename: str):
+def http_bootstrap(folder: str, filename: str):
 	path = "./assets/bootstrap/" + folder + "/" + filename
 	if os.path.isfile(path):
 		return send_file(path)
