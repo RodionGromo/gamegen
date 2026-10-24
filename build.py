@@ -33,14 +33,16 @@ if downloadBootstrap:
 		
 		working_dir = Path.cwd()
 		if not os.path.exists("./temp/bootstrap"): os.makedirs("./temp/bootstrap")
+		zip_path = str(working_dir / 'temp' / 'bootstrap.zip')
+		zip_output = str(working_dir / 'temp' / 'bootstrap')
 		if is_win:
 			subprocess.run(
-				["powershell", "-NoProfile", "-Command", f'Expand-Archive -Path "{str(working_dir / 'temp' / 'bootstrap.zip')}" -DestinationPath "{str(working_dir / 'temp' / 'bootstrap')}"'],
+				["powershell", "-NoProfile", "-Command", f'Expand-Archive -Path "{zip_path}" -DestinationPath "{zip_output}"'],
 				capture_output=False
 			)
 		else:
 			res = subprocess.run(
-				["unzip", "-o", "-q", f"{str(working_dir / 'temp' / 'bootstrap.zip')}", "-d", f"{str(working_dir / 'temp' / 'bootstrap')}"],
+				["unzip", "-o", "-q", f"{zip_path}", "-d", f"{zip_output}"],
 				capture_output=False
 			)
 			if res.returncode != 0:
