@@ -6,20 +6,30 @@
 	<title>Генератор игр</title>
 </head>
 <body>
-	<div class="container">
-		<div class="col">
-			<div class="row">
+	<div class="container position-absolute top-50 start-50">
+		<div class="d-flex flex-column">
+			<div>
 				<h1 class="w-max text-center">Генератор игр 3000</h1>
 			</div>
-			<div class="row" id="promptInputPane">
+			<div class="d-flex flex-column" id="promptInputPane">
 				<label for="promptInputField" class="form-label">Введите, как должна выглядеть и играться игра:</label>
 				<textarea class="form-control" id="promptInputField"></textarea>
+				<div class="w-max">
+					<button type="button" class="btn float-end" onclick="sendPrompt();">Создать игру ➡</button>
+				</div>
 			</div>
-			<div class="row" id="gameOutputPane" hidden>
+			<div class="d-flex flex-column" id="gameOutputPane" hidden>
 				<h3 class="w-max text-center">Ваша игра готова!</h3>
+				<div class='w-max'>
+					<canvas class="w-max" id="gameCanvas"></canvas>
+				</div>
+				<div class='w-max'>
+					<button type="button" class="btn float-start" onclick="editPrompt();">⬅ Изменить игру</button>
+				</div>
 			</div>
 		</div>
 	</div>
+	<script src="./files/index.js"></script>
 	<link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
 	<script type="module" src="./bootstrap/js/bootstrap.bundle.min.js"></script>
 </body>
