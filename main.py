@@ -13,8 +13,11 @@ with open("sysprompt.txt", "r", encoding="utf-8") as f:
 	systemprompt = f.read()
 
 testgame = ""
-with open("gametest.txt", "r", encoding="utf-8") as f:
-	testgame = json.load(f)
+try:
+	with open("gametest.txt", "r", encoding="utf-8") as f:
+		testgame = json.load(f)
+except FileNotFoundError:
+	testgame = {}
 
 @app.route("/")
 @app.route("/index.html")
