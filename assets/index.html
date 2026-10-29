@@ -1,37 +1,426 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru" data-bs-theme="light">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>Генератор игр</title>
+	<title>Генератор игр 3000</title>
+
+	<link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+
+	<style>
+		/* ----- CSS-переменные для тем ----- */
+		:root,
+		[data-bs-theme="light"] {
+			--app-bg: #f1f5f9;
+			--app-card-bg: rgba(255, 255, 255, .75);
+			--app-card-border: rgba(148, 163, 184, .25);
+			--app-card-shadow: 0 30px 70px -30px rgba(15, 23, 42, .35);
+			--app-text: #1e293b;
+			--app-text-muted: #64748b;
+			--app-input-bg: rgba(255, 255, 255, .85);
+			--app-input-border: rgba(148, 163, 184, .4);
+			--app-input-focus-bg: #ffffff;
+			--app-btn-secondary-bg: rgba(148, 163, 184, .12);
+			--app-btn-secondary-border: rgba(148, 163, 184, .35);
+			--app-btn-secondary-hover: rgba(148, 163, 184, .2);
+			--app-canvas-bg: #ffffff;
+		}
+
+		[data-bs-theme="dark"] {
+			--app-bg: #0b1020;
+			--app-card-bg: rgba(30, 41, 59, .72);
+			--app-card-border: rgba(148, 163, 184, .18);
+			--app-card-shadow: 0 30px 70px -30px rgba(0, 0, 0, .95);
+			--app-text: #e2e8f0;
+			--app-text-muted: #94a3b8;
+			--app-input-bg: rgba(2, 6, 23, .55);
+			--app-input-border: rgba(148, 163, 184, .25);
+			--app-input-focus-bg: rgba(2, 6, 23, .8);
+			--app-btn-secondary-bg: rgba(148, 163, 184, .08);
+			--app-btn-secondary-border: rgba(148, 163, 184, .35);
+			--app-btn-secondary-hover: rgba(148, 163, 184, .18);
+			--app-canvas-bg: #060912;
+		}
+
+		:root {
+			--accent-1: #6366f1;
+			--accent-2: #a855f7;
+			--accent-3: #ec4899;
+			--ring: rgba(99, 102, 241, .35);
+		}
+
+		[hidden] { display: none !important; }
+
+		html { height: 100%; }
+
+		body {
+			min-height: 100dvh;
+			margin: 0;
+			padding: clamp(1rem, 4vw, 2.5rem) 1rem;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			color: var(--app-text);
+			background-color: var(--app-bg);
+			background-image:
+				radial-gradient(60% 50% at 12% 8%, rgba(99, 102, 241, .18), transparent 70%),
+				radial-gradient(55% 45% at 88% 12%, rgba(236, 72, 153, .12), transparent 70%),
+				radial-gradient(65% 60% at 50% 108%, rgba(34, 211, 238, .12), transparent 70%);
+			background-repeat: no-repeat;
+			transition: background-color .3s ease, color .3s ease;
+		}
+
+		/* ---------- Карточка ---------- */
+		.app-card {
+			width: 100%;
+			max-width: 880px;
+			padding: clamp(1.25rem, 3vw, 2.25rem);
+			border-radius: 1.5rem;
+			background: var(--app-card-bg);
+			border: 1px solid var(--app-card-border);
+			box-shadow: var(--app-card-shadow), inset 0 1px 0 rgba(255, 255, 255, .06);
+			backdrop-filter: blur(16px) saturate(140%);
+			-webkit-backdrop-filter: blur(16px) saturate(140%);
+			transition: background-color .3s ease, border-color .3s ease, box-shadow .3s ease;
+		}
+
+		/* ---------- Шапка ---------- */
+		.app-header {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-start;
+			gap: 1rem;
+			margin-bottom: 1.5rem;
+		}
+
+		.app-title {
+			margin: 0;
+			font-size: clamp(1.6rem, 4vw, 2.4rem);
+			font-weight: 800;
+			line-height: 1.15;
+			letter-spacing: -.03em;
+			background: linear-gradient(100deg, #818cf8 0%, #c084fc 45%, #22d3ee 100%);
+			-webkit-background-clip: text;
+			background-clip: text;
+			color: transparent;
+		}
+
+		.app-subtitle {
+			margin: .4rem 0 0;
+			color: var(--app-text-muted);
+			font-size: .95rem;
+		}
+
+		/* ---------- Сегментированный переключатель тем ---------- */
+		.theme-switcher {
+			display: inline-flex;
+			gap: 2px;
+			padding: 3px;
+			flex-shrink: 0;
+			background: var(--app-btn-secondary-bg);
+			border: 1px solid var(--app-btn-secondary-border);
+			border-radius: .75rem;
+			transition: background-color .3s ease, border-color .3s ease;
+		}
+
+		.theme-btn {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			width: 2.25rem;
+			height: 2.25rem;
+			padding: 0;
+			font-size: 1rem;
+			line-height: 1;
+			color: var(--app-text-muted);
+			background: transparent;
+			border: 0;
+			border-radius: .55rem;
+			cursor: pointer;
+			transition: background-color .15s ease, color .15s ease, box-shadow .15s ease;
+		}
+
+		.theme-btn:hover {
+			background: var(--app-btn-secondary-hover);
+			color: var(--app-text);
+		}
+
+		.theme-btn.active {
+			color: #fff;
+			background: linear-gradient(135deg, var(--accent-1), var(--accent-2));
+			box-shadow: 0 4px 12px -4px rgba(99, 102, 241, .6);
+		}
+
+		.theme-btn:focus-visible {
+			outline: none;
+			box-shadow: 0 0 0 .25rem var(--ring);
+		}
+
+		/* ---------- Форма ---------- */
+		.form-label {
+			color: var(--app-text);
+			font-weight: 600;
+			letter-spacing: .01em;
+		}
+
+		#promptInputField {
+			min-height: 150px;
+			padding: 1rem 1.1rem;
+			resize: vertical;
+			color: var(--app-text);
+			background-color: var(--app-input-bg);
+			border: 1px solid var(--app-input-border);
+			border-radius: .9rem;
+			transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+		}
+
+		#promptInputField::placeholder { color: var(--app-text-muted); }
+
+		#promptInputField:focus {
+			background-color: var(--app-input-focus-bg);
+			border-color: var(--accent-1);
+			box-shadow: 0 0 0 .25rem var(--ring);
+		}
+
+		/* ---------- Кнопки ---------- */
+		.btn-generate {
+			padding: .75rem 1.6rem;
+			font-weight: 600;
+			color: #fff;
+			border: 0;
+			border-radius: .85rem;
+			background-image: linear-gradient(135deg, var(--accent-1), var(--accent-2) 55%, var(--accent-3));
+			box-shadow: 0 14px 30px -14px rgba(168, 85, 247, .95);
+			transition: transform .15s ease, box-shadow .15s ease, filter .15s ease;
+		}
+
+		.btn-generate:hover {
+			color: #fff;
+			filter: brightness(1.08);
+			transform: translateY(-2px);
+			box-shadow: 0 18px 36px -14px rgba(168, 85, 247, 1);
+		}
+
+		.btn-generate:active {
+			transform: translateY(0);
+			filter: brightness(.98);
+		}
+
+		.btn-back {
+			padding: .6rem 1.15rem;
+			font-weight: 600;
+			color: var(--app-text);
+			background-color: var(--app-btn-secondary-bg);
+			border: 1px solid var(--app-btn-secondary-border);
+			border-radius: .85rem;
+			transition: color .15s ease, background-color .15s ease, border-color .15s ease, transform .15s ease;
+		}
+
+		.btn-back:hover {
+			color: var(--app-text);
+			background-color: var(--app-btn-secondary-hover);
+			transform: translateY(-1px);
+		}
+
+		.btn-generate:focus-visible,
+		.btn-back:focus-visible {
+			outline: none;
+			box-shadow: 0 0 0 .25rem var(--ring);
+		}
+
+		/* ---------- Статус ---------- */
+		.status-text {
+			display: inline-flex;
+			align-items: center;
+			gap: .55rem;
+			margin: 0;
+			font-weight: 600;
+			color: #059669;
+			transition: color .25s ease;
+		}
+
+		.status-text::before {
+			content: "";
+			width: .55rem;
+			height: .55rem;
+			border-radius: 50%;
+			background: #34d399;
+			box-shadow: 0 0 0 .25rem rgba(52, 211, 153, .18);
+			transition: background-color .25s ease, box-shadow .25s ease;
+		}
+
+		/* Состояние: идёт генерация */
+		.status-text[data-state="loading"] { color: #b45309; }
+		[data-bs-theme="dark"] .status-text[data-state="loading"] { color: #fbbf24; }
+
+		.status-text[data-state="loading"]::before {
+			background: #f59e0b;
+			box-shadow: 0 0 0 .25rem rgba(245, 158, 11, .25);
+			animation: status-pulse 1s ease-in-out infinite;
+		}
+
+		/* Состояние: игра готова */
+		.status-text[data-state="ready"] { color: #059669; }
+		[data-bs-theme="dark"] .status-text[data-state="ready"] { color: #a7f3d0; }
+
+		.status-text[data-state="ready"]::before {
+			background: #34d399;
+			box-shadow: 0 0 0 .25rem rgba(52, 211, 153, .18);
+		}
+
+		@keyframes status-pulse {
+			0%, 100% { transform: scale(1);   opacity: 1; }
+			50%      { transform: scale(1.6); opacity: .45; }
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			.status-text[data-state="loading"]::before { animation: none; }
+		}
+
+		/* ---------- Канвас ---------- */
+		.canvas-wrap {
+			line-height: 0;
+			overflow: hidden;
+			border-radius: 1rem;
+			border: 1px solid var(--app-card-border);
+			background: var(--app-canvas-bg);
+			box-shadow: 0 24px 50px -24px rgba(0, 0, 0, .25);
+			transition: background-color .3s ease, border-color .3s ease;
+		}
+
+		#gameCanvas {
+			display: block;
+			width: 100%;
+			max-width: 800px;
+			height: auto;
+			aspect-ratio: 4 / 3;
+			margin: 0 auto;
+			background: var(--app-canvas-bg);
+			transition: background-color .3s ease;
+		}
+
+		::selection {
+			background: rgba(139, 92, 246, .45);
+			color: #fff;
+		}
+
+		@media (prefers-reduced-motion: reduce) {
+			* {
+				transition: none !important;
+				animation: none !important;
+			}
+		}
+	</style>
 </head>
 <body>
-	<div class="container">
-		<div class="d-flex flex-column">
-			<div class="mb-2">
-				<h1 class="start-50 text-center">Генератор игр 3000</h1>
+	<main class="app-card">
+		<header class="app-header">
+			<div>
+				<h1 class="app-title">Генератор игр 3000</h1>
+				<p class="app-subtitle">Опишите идею — остальное сделаем мы</p>
 			</div>
-			<div class="d-flex flex-column" id="promptInputPane">
-				<label for="promptInputField" class="form-label">Введите, как должна выглядеть и играться игра:</label>
-				<textarea class="form-control mb-2" id="promptInputField"></textarea>
-				<div class="start-0">
-					<button type="button" class="btn float-end" onclick="sendPrompt();">Создать игру ➡</button>
-				</div>
+
+			<!-- Переключатель цветовых режимов (самодостаточный) -->
+			<div class="theme-switcher" role="radiogroup" aria-label="Цветовая тема">
+				<button type="button" class="theme-btn" role="radio" aria-checked="false"
+				        data-bs-theme-value="light" aria-label="Светлая тема" title="Светлая">☀️</button>
+				<button type="button" class="theme-btn" role="radio" aria-checked="false"
+				        data-bs-theme-value="dark" aria-label="Тёмная тема" title="Тёмная">🌙</button>
+				<button type="button" class="theme-btn" role="radio" aria-checked="false"
+				        data-bs-theme-value="auto" aria-label="Автоматически по системе" title="Авто">🌓</button>
 			</div>
-			<div class="d-flex flex-column" id="gameOutputPane" hidden>
-				<label class="w-max form-label">Ваша игра готова!</label>
-				<div class='w-max mb-2'>
-					<canvas class="w-max" id="gameCanvas"></canvas>
-				</div>
-				<div class='w-max'>
-					<button type="button" class="btn float-start" onclick="editPrompt();">⬅ Изменить игру</button>
-				</div>
+		</header>
+
+		<!-- Панель ввода -->
+		<section class="d-flex flex-column" id="promptInputPane">
+			<label for="promptInputField" class="form-label mb-2">
+				Введите, как должна выглядеть и играться игра:
+			</label>
+			<textarea
+				class="form-control mb-3"
+				id="promptInputField"
+				placeholder="Например: космический шутер, где игрок управляет кораблём..."></textarea>
+			<div class="d-flex justify-content-end">
+				<button type="button" class="btn btn-generate" onclick="sendPrompt();">
+					Создать игру <span aria-hidden="true">➡</span>
+				</button>
 			</div>
-		</div>
-	</div>
-	<script src="./files/index.js"></script>
+		</section>
+
+		<!-- Панель результата -->
+		<section class="d-flex flex-column" id="gameOutputPane" hidden>
+			<label id="statusText" class="status-text mb-3" data-state="loading">Ваша игра генерируется…</label>
+
+			<div class="canvas-wrap mb-3">
+				<canvas id="gameCanvas" width="800" height="600"></canvas>
+			</div>
+
+			<div class="d-flex justify-content-start">
+				<button type="button" class="btn btn-back" onclick="editPrompt();">
+					<span aria-hidden="true">⬅</span> Изменить игру
+				</button>
+			</div>
+		</section>
+	</main>
+
 	<script src="./files/engine.js"></script>
-	<link href="./bootstrap/css/bootstrap.min.css" rel="stylesheet">
+	<script src="./files/index.js"></script>
 	<script type="module" src="./bootstrap/js/bootstrap.bundle.min.js"></script>
+
+	<!-- Переключение темы (без зависимости от Bootstrap JS) -->
+	<script>
+		(() => {
+			const STORAGE_KEY = 'theme';
+			const html = document.documentElement;
+			const buttons = document.querySelectorAll('[data-bs-theme-value]');
+
+			function applyTheme(mode) {
+				const resolved = mode === 'auto'
+					? (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light')
+					: mode;
+
+				html.setAttribute('data-bs-theme', resolved);
+				localStorage.setItem(STORAGE_KEY, mode);
+
+				buttons.forEach(btn => {
+					const isActive = btn.getAttribute('data-bs-theme-value') === mode;
+					btn.classList.toggle('active', isActive);
+					btn.setAttribute('aria-checked', String(isActive));
+				});
+			}
+
+			function initTheme() {
+				let saved = localStorage.getItem(STORAGE_KEY);
+				if (!saved) {
+					const attr = html.getAttribute('data-bs-theme');
+					saved = (attr === 'light' || attr === 'dark') ? attr : 'auto';
+				}
+				applyTheme(saved);
+
+				window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+					if (localStorage.getItem(STORAGE_KEY) === 'auto') applyTheme('auto');
+				});
+			}
+
+			buttons.forEach(btn => {
+				btn.addEventListener('click', () => {
+					applyTheme(btn.getAttribute('data-bs-theme-value'));
+				});
+			});
+
+			initTheme();
+		})();
+	</script>
+	
+	<script>
+		window.setGameStatus = function (state) {
+			const el = document.getElementById('statusText');
+			if (!el) return;
+			el.dataset.state = state; // 'loading' | 'ready'
+			el.textContent = state === 'loading'
+				? 'Ваша игра генерируется…'
+				: 'Ваша игра готова!';
+		};
+	</script>
 </body>
 </html>

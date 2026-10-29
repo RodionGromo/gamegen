@@ -1,11 +1,26 @@
-from flask import Flask, send_file
+from flask import Flask, send_file, request
 import os, json
+import requests
 
 app = Flask(__name__)
 
 appSettings = {}
 with open("settings.json", "r") as f:
-	json.load(f)
+	appSettings = json.load(f)
+
+systemprompt = ""
+try:
+	with open("sysprompt.txt", "r", encoding="utf-8") as f:
+		systemprompt = f.read()
+except FileNotFoundError:
+	raise Exception("Can't start server! AI system message missing, download sysprompt.txt from repository")
+
+testgame = ""
+try:
+	with open("gametest.txt", "r", encoding="utf-8") as f:
+		testgame = json.load(f)
+except FileNotFoundError:
+	testgame = {}
 
 @app.route("/")
 @app.route("/index.html")
@@ -25,5 +40,41 @@ def http_bootstrap(folder: str, filename: str):
 		return send_file("./assets/bootstrap/" + folder + "/" + filename)
 	return "bootstrap file not found!", 404
 
+@app.route("/api/testCode")
+def http_testgame():
+	return testgame["choices"][0]["message"]["content"]
+
+@app.route("/api/generate", methods=["POST"])
+def http_gamegen():
+	data = request.get_json(silent=True)
+	if data is None:
+		return "Invalid data!", 400
+
+	if "game_prompt" not in data.keys():
+		return "Invalid content!", 400
+
+	if len(data["game_prompt"]) < 16:
+		return "Invalid content!", 400
+	print("Got correct request to generate a game! Starting process...")
+	# send request
+	req = requests.post("https://api.teamorouter.com/v1/chat/completions",
+		headers={"Content-Type": "application/json", "Authorization": "Bearer " + appSettings["ai_api_key"]},
+		json={
+			"model":"deepseek-v4-flash-free", "messages":[{"role": "system", "content": systemprompt}, {"role": "user", "content": data["game_prompt"]}]
+		}
+	)
+	res = None
+	try:
+		res = req.json()
+		if "choices" in res and len(res["choices"]) > 0:
+			data = res["choices"][0]["message"]["content"]
+			with open("gametest.txt", "w") as f:
+				f.write(json.dumps(res))
+				testgame = res
+			return data
+	except Exception as e:
+		print("error occured on getting json:", e)
+		return "Response parse error", 500
+
 if __name__ == "__main__":
-	app.run(port=4515, debug=False)
+	app.run(port=appSettings["port"], host=appSettings["host"], debug=False)
