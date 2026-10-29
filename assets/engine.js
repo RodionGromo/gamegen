@@ -35,7 +35,7 @@ class Engine {
 		this.context = canvas.getContext("2d");
 		this.height = canvas.height ?? 800;
 		this.width = canvas.width ?? 600;
-		this._pointer = {x: 0, y: 0, isDown: false}
+		this._pointer = {x: 0, y: 0, isDown: false};
 		this._lastClick = null;
 
 		const toWorld = (e) => {
@@ -67,7 +67,7 @@ class Engine {
 	}
 
 	getPointer() {
-		return {x: this._pointer.x, y: this._pointer.y, isDown: this._pointer.isDown}
+		return {x: this._pointer.x, y: this._pointer.y, isDown: this._pointer.isDown};
 	}
 
 	consumePointerClick() {
@@ -85,8 +85,8 @@ class Engine {
 	}
 
 	fillBackground(color) {
-		this.setColor(color)
-		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height)
+		this.setColor(color);
+		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 
 	renderRect(rect) {
@@ -100,10 +100,10 @@ class Engine {
 	}
 
 	renderText(text, x, y, color, size = 16, align = "left") {
-		this.context.font = `${size}px serif`
-		this.setColor(color)
-		this.context.textAlign = align
+		this.context.font = `${size}px serif`;
+		this.setColor(color);
+		this.context.textAlign = align;
 		this.textBaseline = "top";
-		this.context.fillText(text, x, y)
+		this.context.fillText(text, x, y);
 	}
 }

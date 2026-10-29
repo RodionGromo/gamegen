@@ -9,8 +9,11 @@ with open("settings.json", "r") as f:
 	appSettings = json.load(f)
 
 systemprompt = ""
-with open("sysprompt.txt", "r", encoding="utf-8") as f:
-	systemprompt = f.read()
+try:
+	with open("sysprompt.txt", "r", encoding="utf-8") as f:
+		systemprompt = f.read()
+except FileNotFoundError:
+	raise Exception("Can't start server! AI system message missing, download sysprompt.txt from repository")
 
 testgame = ""
 try:
@@ -74,4 +77,4 @@ def http_gamegen():
 		return "Response parse error", 500
 
 if __name__ == "__main__":
-	app.run(port=appSettings["port"], debug=False)
+	app.run(port=appSettings["port"], host=appSettings["host"], debug=False)
